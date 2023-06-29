@@ -1,7 +1,6 @@
 import java.util.*;
 
-public class System {
-  public float timeMultiplier = 1;
+public class System implements GameObject {
   private ArrayList<Entity> entities;
   // Put hign priority last. But as iteration is backward, it will be updated first
   private final Comparator<Entity> priorityComparator = new Comparator<Entity>() {
@@ -15,37 +14,24 @@ public class System {
     entities = new ArrayList();
   }
   
-  public System(ArrayList<Entity> entities) {
-    this.entities = entities;
-  }
-  
-  private boolean pause = false;
-  private int timestamp;
-  
-  public void setPause(boolean p) {
-    pause = p;
-    if (!pause) {
-      timestamp = millis();
-    }
-  }
-  
   public void spawn(Entity e) {
     entities.add(e);
-    e.init();
+    e.onSpawn(this);
   }
   
   public boolean despawn(Entity e) {
-    return entities.remove(e);
+    if (entities.remove(e)) {
+      e.onDespawn();
+      return true;
+    }
+    return false;
   }
   
-  public Entity[] entities() {
-    return (Entity[])entities.toArray();
+  public ArrayList<Entity> entities() {
+    return entities;
   }
   
-  public void update() {
-    float delta = (float)(millis() - timestamp) / 1000 * timeMultiplier;
-    timestamp = millis();
-    
+  public void update(float delta) {
     Collections.sort(entities, priorityComparator);
     
     for (int i=entities.size()-1; i>=0; i--) {
@@ -65,6 +51,17 @@ public class System {
       
       Entity e = entities.get(i);
       e.afterUpdate();
+    }
+  }
+  
+  public void display() {
+    Collections.sort(entities, priorityComparator);
+    
+    for (int i=entities.size()-1; i>=0; i--) {
+      if (i >= entities.size()) continue;
+      
+      Entity e = entities.get(i);
+      e.display();
     }
   }
   
@@ -106,5 +103,27 @@ public class System {
       
       entities.get(i).mouseWheel(e);
     }
+  }
+}
+
+abstract class Scene extends System {
+  // Must setup camera
+  public CameraComponent camera;
+  
+  public Scene() {
+    super();
+  }
+  
+  public abstract void init();
+  public abstract void dispose();
+  
+  @Override
+  public void display() {
+    pushMatrix();
+    
+    if (camera != null) camera.applyView();  // Move view according to camera location, rotation and zoom
+    super.display();
+    
+    popMatrix();
   }
 }

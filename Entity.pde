@@ -60,13 +60,16 @@ public static class Transform {
   }
 }
 
-public class Entity {
+public class Entity implements GameObject {
   // Position in the world
   public Transform transform;
   // Priority of call
   public int priority = 0;
   // All the components
   private ArrayList<Component> components = new ArrayList();
+  // System in witch this is added
+  private System system = null;
+  public System system() { return system; }
   
   public Entity(PVector transform) {
     this.transform = new Transform(transform);
@@ -126,12 +129,18 @@ public class Entity {
     return res;
   }
   
-  public void init() {
+  public void onSpawn(System system) {
+    this.system = system;
+    
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
       components.get(i).init();
     }
+  }
+  
+  public void onDespawn() {
+    this.system = null;
   }
   
   public void beforeUpdate() {
@@ -155,6 +164,14 @@ public class Entity {
       if (i>=components.size()) continue;
       
       components.get(i).afterUpdate();
+    }
+  }
+  
+  public void display() {
+    for (int i=components.size()-1; i>=0; i--) {
+      if (i>=components.size()) continue;
+      
+      components.get(i).display();
     }
   }
   

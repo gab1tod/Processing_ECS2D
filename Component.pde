@@ -1,6 +1,7 @@
-public abstract class Component {
+public abstract class Component implements GameObject {
   Entity entity = null;
   public Entity entity() { return entity; }
+  public Transform transform() { return entity.transform; }
   
   // Called when component is added to a new Entity
   void onRegistered(Entity e) {
@@ -14,8 +15,10 @@ public abstract class Component {
   public void init() {};
   
   public void beforeUpdate() {}
-  public abstract void update(float delta);
+  public void update(float delta) {}
   public void afterUpdate() {}
+  
+  public void display() {}
   
   void keyPressed(KeyEvent e) {}
   void keyReleased(KeyEvent e) {}
