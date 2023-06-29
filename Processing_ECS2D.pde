@@ -1,7 +1,7 @@
 public Game game;
 
 void setup() {
-  size(960, 540);
+  size(1440, 810);
   
   game = new TestGame();
 }

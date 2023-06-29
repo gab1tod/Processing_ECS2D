@@ -13,17 +13,18 @@ public class Level1 extends Scene {
   @Override
     public void init() {
     // Setup camera
-    Camera cam = new Camera(width/2, height/2, 0);
+    Camera cam = new Camera(1440/2, 810/2, 0);
     this.camera = cam.component;
     spawn(cam);
+    cam.component.zoom = height / 810.0;
 
     // Setup player
-    player = new Tank(color(255, 0, 0), width/2, height/2, 0);
+    player = new Tank(color(255, 0, 0), 1440/2, 810/2, 0);
     spawn(player);
 
     // TODO: remove after tests
     //cam.transform.moveTo(0, 0, 0);
-    //cam.transform.parent = player.transform;
+    //cam.transform.parent = player.turret.transform;
     cam.follow(player.transform, false);
 
     // Grid background
@@ -35,10 +36,10 @@ public class Level1 extends Scene {
         strokeWeight(1);
 
         for (int i=0; i<=16; i++) {
-          line(i * width/16, 0, i * width/16, height);
+          line(i * 1440/16, 0, i * 1440/16, 810);
         }
         for (int i=0; i<=9; i++) {
-          line(0, i * height/9, width, i * height/9);
+          line(0, i * 810/9, 1440, i * 810/9);
         }
       }
     };
@@ -135,7 +136,7 @@ public class Turret extends Entity {
     super(position);
     controller = new TurretController();
     body = new RectDC(c, -10, -10, 20, 20);
-    cannon = new RectDC(c, -2, 0, 4, -30);
+    cannon = new RectDC(c, -2, 0, 4, -33);
     registerComponent(controller);
     registerComponent(body);
     registerComponent(cannon);
@@ -145,7 +146,7 @@ public class Turret extends Entity {
     super(x, y, z);
     controller = new TurretController();
     body = new RectDC(c, -10, -10, 20, 20);
-    cannon = new RectDC(c, -2, 0, 4, -30);
+    cannon = new RectDC(c, -2, 0, 4, -33);
     registerComponent(controller);
     registerComponent(body);
     registerComponent(cannon);
