@@ -3,8 +3,11 @@ public static class Transform {
   public PVector vector;  // x: x, y: y, z: angle
   
   public float x() { return vector.x; }
+  public float x(float val) { return vector.x = val; }
   public float y() { return vector.y; }
+  public float y(float val) { return vector.y = val; }
   public float angle() { return vector.z; }
+  public float angle(float val) { return vector.z = val; }
   
   public Transform(PVector vector) {
     this.vector = vector;
@@ -55,6 +58,10 @@ public static class Transform {
     return point;
   }
   
+  public PVector globalToLocal(float x, float y, float a) {
+    return globalToLocal(new PVector(x, y, a));
+  }
+  
   public static Transform fromVector(PVector v) {
     return new Transform(v.x, v.y, v.z);
   }
@@ -68,8 +75,8 @@ public class Entity implements GameObject {
   // All the components
   private ArrayList<Component> components = new ArrayList();
   // System in witch this is added
-  private System system = null;
-  public System system() { return system; }
+  private Scene scene = null;
+  public Scene scene() { return scene; }
   
   public Entity(PVector transform) {
     this.transform = new Transform(transform);
@@ -129,8 +136,8 @@ public class Entity implements GameObject {
     return res;
   }
   
-  public void onSpawn(System system) {
-    this.system = system;
+  public void onSpawn(Scene scene) {
+    this.scene = scene;
     
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
@@ -140,7 +147,7 @@ public class Entity implements GameObject {
   }
   
   public void onDespawn() {
-    this.system = null;
+    this.scene = null;
   }
   
   public void beforeUpdate() {

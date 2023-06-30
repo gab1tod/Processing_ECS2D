@@ -21,11 +21,24 @@ public class Level1 extends Scene {
     // Setup player
     player = new Tank(color(255, 0, 0), 800/2, 450/2, 0);
     spawn(player);
+    
+    // World/screen test
+    Entity stw = new Entity(0, 0, 0);
+    stw.registerComponent(new Component(){  // Screen to world controller
+      Camera camera = cam;
+    
+      @Override
+      public void update(float delta) {
+        transform().moveTo(camera.screenToWorld(mouseX, mouseY));
+      }
+    });
+    stw.registerComponent(new RectDC(color(0, 0, 255), -10, -10, 20, 20));
+    spawn(stw);
 
-    // TODO: remove after tests
-    //cam.transform.moveTo(0, 0, 0);
+    //cam.transform.moveTo(0, -100, 0);
     //cam.transform.parent = player.turret.transform;
-    cam.follow(player.transform, false);
+    cam.follow(player.transform, true);
+    cam.offset(0, -50, 0);
 
     // Grid background
     Entity grid = new Entity(0, 0, 0);
@@ -56,8 +69,8 @@ public class Level1 extends Scene {
 public class TankController extends Component {
   public float speed = 100;  // pixel/s
   public float speedInput = 0;
-  public float speedInputSpeed = 0.15;  // Input reactivity between 0..1
-  public float turnSpeed = 1.5;  // Radian/s
+  public float speedInputSpeed = 0.1;  // Input reactivity between 0..1
+  public float turnSpeed = 1.2;  // Radian/s
   public float turnInput = 0;
   public float turnInputSpeed = 0.15;  // Input reactivity between 0..1
 
@@ -86,12 +99,18 @@ public class TurretController extends Component {
 
   @Override
     public void update(float delta) {
-    float direction = 0;
-    if (game.pressedKeys.containsKey(LEFT)) direction --;
-    if (game.pressedKeys.containsKey(RIGHT)) direction ++;
+    //float direction = 0;
+    //if (game.pressedKeys.containsKey(LEFT)) direction --;
+    //if (game.pressedKeys.containsKey(RIGHT)) direction ++;
     
-    turnInput += (direction - turnInput) * turnInputSpeed;
-    transform().move(0, 0, turnInput * turnSpeed * delta);
+    //turnInput += (direction - turnInput) * turnInputSpeed;
+    //transform().move(0, 0, turnInput * turnSpeed * delta);
+    
+    PVector target = entity().scene.camera.screenToWorld(mouseX, mouseY);
+    target.sub(transform().global());
+    float targetAngle = atan2(target.y, target.x) + HALF_PI;
+    targetAngle = transform().parent != null ? transform().parent.globalToLocal(0, 0, targetAngle).z : targetAngle;
+    transform().angle(targetAngle);
   }
 }
 
@@ -124,15 +143,15 @@ public class Tank extends Entity {
   }
 
   @Override
-    public void onSpawn(System system) {
-    super.onSpawn(system);
+    public void onSpawn(Scene scene) {
+    super.onSpawn(scene);
 
-    system.spawn(turret);
+    scene.spawn(turret);
   }
 
   @Override
     public void onDespawn() {
-    if (system() != null) system().despawn(turret);
+    if (scene() != null) scene().despawn(turret);
 
     super.onDespawn();
   }

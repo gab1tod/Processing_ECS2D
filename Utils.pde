@@ -52,6 +52,8 @@ public class CameraComponent extends Component {
   public Transform target = null;
   public boolean follow = false;
   public boolean followAngle = false;
+  private PVector offset = new PVector(0, 0, 0);  // Offset when following
+  public boolean offsetRelative = true;  // Offset relative to target
 
   public void applyView() {
     PVector pos = transform().global();
@@ -60,6 +62,31 @@ public class CameraComponent extends Component {
     translate(width/2 /zoom, height/2 /zoom);
     rotate(-pos.z);
     translate(-pos.x, -pos.y);
+  }
+  
+  public PVector screenToWorld(PVector point) {
+    PVector pos = transform().global();
+    PVector res = point.copy();
+    
+    res.sub(new PVector(width/2, height/2));
+    res.rotate(pos.z);
+    res.add(pos.copy().mult(zoom));
+    res.div(zoom);
+    
+    return res;
+  }
+  
+  public PVector screenToWorld(float x, float y) {
+    return screenToWorld(new PVector(x, y));
+  }
+  
+  public PVector worldToScreen(PVector point) {
+    // TODO
+    return point;
+  }
+  
+  public PVector worldToScreen(float x, float y) {
+    return worldToScreen(new PVector(x, y));
   }
 
   @Override
@@ -71,6 +98,12 @@ public class CameraComponent extends Component {
         transform().vector.x = target.global().x;
         transform().vector.y = target.global().y;
       }
+      
+      PVector off = offset.copy();
+      if (offsetRelative) {
+        off.rotate(target.global().z);
+      }
+      transform().move(off);
     }
   }
 
@@ -83,6 +116,10 @@ public class CameraComponent extends Component {
   public void unfollow() {
     this.follow = false;
   }
+  
+  public PVector offset() { return offset; }
+  public PVector offset(PVector value) { return offset = value; }
+  public PVector offset(float x, float y, float a) { return offset(new PVector(x, y, a)); }
 }
 
 public class Camera extends Entity {
@@ -106,5 +143,25 @@ public class Camera extends Entity {
 
   public void unfollow() {
     component.unfollow();
+  }
+  
+  public PVector offset() { return component.offset(); }
+  public PVector offset(PVector value) { return component.offset(value); }
+  public PVector offset(float x, float y, float a) { return offset(new PVector(x, y, a)); }
+  
+  public PVector screenToWorld(PVector point) {
+    return component.screenToWorld(point);
+  }
+  
+  public PVector screenToWorld(float x, float y) {
+    return screenToWorld(new PVector(x, y));
+  }
+  
+  public PVector worldToScreen(PVector point) {
+    return component.worldToScreen(point);
+  }
+  
+  public PVector worldToScreen(float x, float y) {
+    return worldToScreen(new PVector(x, y));
   }
 }
