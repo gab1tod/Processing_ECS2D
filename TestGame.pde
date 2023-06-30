@@ -27,8 +27,14 @@ public class Level1 extends Scene {
     });
 
     // Setup player
-    player = new Tank(color(255, 0, 0), 800/2, 450/2, 0);
+    player = new Tank(color(255, 0, 0), 800/3, 450/2, 0);
     spawn(player);
+    
+    // Setup dummy
+    Tank dummy = new Tank(color(0, 0, 255), 2*800/3, 450/2, 0);
+    dummy.controller.enable = false;
+    dummy.turret.controller.enable = false;
+    spawn(dummy);
     
     // World/screen test
     stw = new Entity(0, 0, 0);
@@ -36,16 +42,17 @@ public class Level1 extends Scene {
       Camera camera = cam;
     
       @Override
-      public void update(float delta) {
+      public void afterUpdate() {
         transform().moveTo(camera.screenToWorld(mouseX, mouseY));
       }
     });
-    stw.registerComponent(new RectDC(color(0, 0, 255), -10, -10, 20, 20));
+    stw.registerComponent(new EllipseDC(color(200, 0, 0), 0, 0, 10, 10, false));
+    stw.priority = -2;
     spawn(stw);
 
     //cam.transform.moveTo(0, -100, 0);
     //cam.transform.parent = player.turret.transform;
-    cam.follow(player.transform, true);
+    cam.follow(player.transform, false);
     cam.offset(0, -50, 0);
 
     // Grid background
@@ -104,6 +111,8 @@ public class TurretController extends Component {
   public float turnSpeed = 1.5;  // Radian/s
   public float turnInput = 0;
   public float turnInputSpeed = 0.33;  // Input reactivity between 0..1
+  public int lastShot = 0;
+  public int timeBetweenShots = 1000;  // Time between to shots in ms
 
   @Override
     public void update(float delta) {
@@ -119,6 +128,16 @@ public class TurretController extends Component {
     float targetAngle = atan2(target.y, target.x) + HALF_PI;
     targetAngle = transform().parent != null ? transform().parent.globalToLocal(0, 0, targetAngle).z : targetAngle;
     transform().angle(targetAngle);
+    
+    if (game.pressedMouseButtons.contains(LEFT) && millis()-lastShot > timeBetweenShots) {
+      lastShot = millis();
+      entity().scene.spawn(new Bullet(
+        color(255, 255, 0),
+        entity().transform.localToGlobal(0, -30, 0),
+        new PVector(0, -1000, 0).rotate(entity().transform.global().z),
+        1.0
+      ));
+    }
   }
 }
 
@@ -188,5 +207,56 @@ public class Turret extends Entity {
     registerComponent(controller);
     registerComponent(body);
     registerComponent(cannon);
+  }
+}
+
+// BULLET
+public class BulletController extends Component {
+  public PVector speed;
+  public float timeToLive;  // In seconds
+  
+  public BulletController(float x, float y, float a, float t) {
+    super();
+    this.speed = new PVector(x, y, a);
+    this.timeToLive = t;
+  }
+  
+  public BulletController(PVector dir, float t) {
+    super();
+    this.speed = dir;
+    this.timeToLive = t;
+  }
+  
+  @Override
+  public void update(float delta) {
+    PVector direction = speed.copy();
+    direction.mult(delta);
+    transform().move(direction);
+    
+    timeToLive -= delta;
+    if (timeToLive <= 0) {
+      entity().scene.despawn(entity());
+    }
+  }
+}
+
+public class Bullet extends Entity {
+  BulletController controller;
+  RectDC body;;
+  
+  public Bullet(color c, PVector pos, PVector dir, float t) {
+    super(pos);
+    controller = new BulletController(dir, t);
+    body = new RectDC(c, -2, -5, 4, 10);
+    registerComponent(controller);
+    registerComponent(body);
+  }
+  
+  public Bullet(color c, float x, float y, float a, float vX, float vY, float vA, float t) {
+    super(x, y, a);
+    controller = new BulletController(vX, vY, vA, t);
+    body = new RectDC(c, -2, -5, 4, 10);
+    registerComponent(controller);
+    registerComponent(body);
   }
 }

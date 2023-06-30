@@ -31,6 +31,61 @@ public class RectDC extends DisplayComponent {
     this.h = h;
   }
 
+  public RectDC(color c, float x, float y, float w, float h, boolean fill) {
+    super();
+    this.c = c;
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.fill = fill;
+  }
+
+  @Override
+    public void displayTransformed() {
+    if (fill) {
+      noStroke();
+      fill(c);
+    } else {
+      noFill();
+      stroke(c);
+      strokeWeight(weight);
+    }
+    
+    rectMode(mode);
+    rect(x, y, w, h);
+  }
+}
+
+public class EllipseDC extends DisplayComponent {
+  public color c;
+  public boolean fill = true;
+  public float weight = 1;
+  public int mode = CENTER;
+  public float x;
+  public float y;
+  public float w;
+  public float h;
+
+  public EllipseDC(color c, float x, float y, float w, float h) {
+    super();
+    this.c = c;
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+  }
+
+  public EllipseDC(color c, float x, float y, float w, float h, boolean fill) {
+    super();
+    this.c = c;
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.fill = fill;
+  }
+
   @Override
     public void displayTransformed() {
     if (fill) {
@@ -42,7 +97,8 @@ public class RectDC extends DisplayComponent {
       strokeWeight(weight);
     }
 
-    rect(x, y, w, h);
+    ellipseMode(mode);
+    ellipse(x, y, w, h);
   }
 }
 

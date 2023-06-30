@@ -43,19 +43,22 @@ public abstract class Scene implements GameObject {
       if (i >= entities.size()) continue;
       
       Entity e = entities.get(i);
-      e.beforeUpdate();
+      if (e.enable)
+        e.beforeUpdate();
     }
     for (int i=entities.size()-1; i>=0; i--) {
       if (i >= entities.size()) continue;
       
       Entity e = entities.get(i);
-      e.update(delta);
+      if (e.enable)
+        e.update(delta);
     }
     for (int i=entities.size()-1; i>=0; i--) {
       if (i >= entities.size()) continue;
       
       Entity e = entities.get(i);
-      e.afterUpdate();
+      if (e.enable)
+        e.afterUpdate();
     }
   }
   
@@ -69,7 +72,8 @@ public abstract class Scene implements GameObject {
       if (i >= entities.size()) continue;
       
       Entity e = entities.get(i);
-      e.display();
+      if (e.enable)
+        e.display();
     }
     
     popMatrix();
@@ -79,7 +83,9 @@ public abstract class Scene implements GameObject {
     for (int i=entities.size()-1; i>=0; i--) {
       if (i >= entities.size()) continue;
       
-      entities.get(i).keyPressed(e);
+      Entity entity = entities.get(i);
+      if (entity.enable)
+        entity.keyPressed(e);
     }
   }
   
@@ -87,7 +93,9 @@ public abstract class Scene implements GameObject {
     for (int i=entities.size()-1; i>=0; i--) {
       if (i >= entities.size()) continue;
       
-      entities.get(i).keyReleased(e);
+      Entity entity = entities.get(i);
+      if (entity.enable)
+        entity.keyReleased(e);
     }
   }
   
@@ -95,7 +103,9 @@ public abstract class Scene implements GameObject {
     for (int i=entities.size()-1; i>=0; i--) {
       if (i >= entities.size()) continue;
       
-      entities.get(i).mousePressed(e);
+      Entity entity = entities.get(i);
+      if (entity.enable)
+        entity.mousePressed(e);
     }
   }
   
@@ -103,7 +113,9 @@ public abstract class Scene implements GameObject {
     for (int i=entities.size()-1; i>=0; i--) {
       if (i >= entities.size()) continue;
       
-      entities.get(i).mouseReleased(e);
+      Entity entity = entities.get(i);
+      if (entity.enable)
+        entity.mouseReleased(e);
     }
   }
   
@@ -111,7 +123,9 @@ public abstract class Scene implements GameObject {
     for (int i=entities.size()-1; i>=0; i--) {
       if (i >= entities.size()) continue;
       
-      entities.get(i).mouseWheel(e);
+      Entity entity = entities.get(i);
+      if (entity.enable)
+        entity.mouseWheel(e);
     }
   }
   
@@ -119,7 +133,9 @@ public abstract class Scene implements GameObject {
     for (int i=entities.size()-1; i>=0; i--) {
       if (i >= entities.size()) continue;
       
-      entities.get(i).windowResized();
+      Entity entity = entities.get(i);
+      if (entity.enable)
+        entity.windowResized();
     }
   }
 }

@@ -70,6 +70,7 @@ public static class Transform {
 public class Entity implements GameObject {
   // Position in the world
   public Transform transform;
+  public boolean enable = true;  // If set to `false`, this component will be ignored
   // Priority of call
   public int priority = 0;
   // All the components
