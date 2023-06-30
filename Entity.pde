@@ -154,7 +154,9 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).beforeUpdate();
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.beforeUpdate();
     }
   }
   
@@ -162,7 +164,9 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).update(delta);
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.update(delta);
     }
   }
   
@@ -170,7 +174,9 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).afterUpdate();
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.afterUpdate();
     }
   }
   
@@ -178,7 +184,9 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).display();
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.display();
     }
   }
   
@@ -186,7 +194,9 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).keyPressed(e);
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.keyPressed(e);
     }
   }
   
@@ -194,7 +204,9 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).keyReleased(e);
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.keyReleased(e);
     }
   }
   
@@ -202,7 +214,9 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).mousePressed(e);
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.mousePressed(e);
     }
   }
   
@@ -210,7 +224,9 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).mouseReleased(e);
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.mouseReleased(e);
     }
   }
   
@@ -218,7 +234,19 @@ public class Entity implements GameObject {
     for (int i=components.size()-1; i>=0; i--) {
       if (i>=components.size()) continue;
       
-      components.get(i).mouseWheel(e);
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.mouseWheel(e);
+    }
+  }
+  
+  void windowResized() {
+    for (int i=components.size()-1; i>=0; i--) {
+      if (i>=components.size()) continue;
+      
+      Component component = components.get(i);
+      if (components.get(i).enable)
+        component.windowResized();
     }
   }
 }

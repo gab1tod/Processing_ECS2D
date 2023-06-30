@@ -1,5 +1,6 @@
 public abstract class Component implements GameObject {
   Entity entity = null;
+  public boolean enable = true;  // If set to `false`, this component will be ignored
   public Entity entity() { return entity; }
   public Transform transform() { return entity.transform; }
   
@@ -25,4 +26,5 @@ public abstract class Component implements GameObject {
   void mousePressed(MouseEvent e) {}
   void mouseReleased(MouseEvent e) {}
   void mouseWheel(MouseEvent e) {}
+  void windowResized() {}
 }

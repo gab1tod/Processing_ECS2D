@@ -6,6 +6,7 @@ public interface GameObject {
   void mousePressed(MouseEvent e);
   void mouseReleased(MouseEvent e);
   void mouseWheel(MouseEvent e);
+  void windowResized();
 }
 
 public class Game implements GameObject {
@@ -73,5 +74,9 @@ public class Game implements GameObject {
   
   void mouseWheel(MouseEvent e) {
     if (scene != null) scene.mouseWheel(e);
+  }
+  
+  void windowResized() {
+    if (scene != null) scene.windowResized();
   }
 }

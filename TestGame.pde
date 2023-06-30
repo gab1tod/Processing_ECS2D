@@ -9,6 +9,7 @@ public class TestGame extends Game {
 // LEVEL 1
 public class Level1 extends Scene {
   public Tank player;
+  public Entity stw;
 
   @Override
     public void init() {
@@ -17,13 +18,20 @@ public class Level1 extends Scene {
     this.camera = cam.component;
     spawn(cam);
     cam.component.zoom = height / 450.0;
+    cam.registerComponent(new Component() {
+      Camera camera = cam;
+      
+      void windowResized() {
+        camera.component.zoom = height / 450.0;
+      }
+    });
 
     // Setup player
     player = new Tank(color(255, 0, 0), 800/2, 450/2, 0);
     spawn(player);
     
     // World/screen test
-    Entity stw = new Entity(0, 0, 0);
+    stw = new Entity(0, 0, 0);
     stw.registerComponent(new Component(){  // Screen to world controller
       Camera camera = cam;
     

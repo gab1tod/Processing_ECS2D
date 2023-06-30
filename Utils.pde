@@ -81,8 +81,15 @@ public class CameraComponent extends Component {
   }
   
   public PVector worldToScreen(PVector point) {
-    // TODO
-    return point;
+    PVector pos = transform().global();
+    PVector res = point.copy();
+    
+    res.mult(zoom);
+    res.sub(pos.copy().mult(zoom));
+    res.rotate(-pos.z);
+    res.add(new PVector(width/2, height/2));
+    
+    return res;
   }
   
   public PVector worldToScreen(float x, float y) {

@@ -114,4 +114,12 @@ public abstract class Scene implements GameObject {
       entities.get(i).mouseWheel(e);
     }
   }
+  
+  void windowResized() {
+    for (int i=entities.size()-1; i>=0; i--) {
+      if (i >= entities.size()) continue;
+      
+      entities.get(i).windowResized();
+    }
+  }
 }
