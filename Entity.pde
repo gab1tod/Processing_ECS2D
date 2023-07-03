@@ -58,6 +58,10 @@ public static class Transform {
     return point;
   }
   
+  public PVector globalToLocal(float x, float y) {
+    return globalToLocal(new PVector(x, y));
+  }
+  
   public PVector globalToLocal(float x, float y, float a) {
     return globalToLocal(new PVector(x, y, a));
   }

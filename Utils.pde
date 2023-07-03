@@ -228,3 +228,78 @@ public class Camera extends Entity {
     return worldToScreen(new PVector(x, y));
   }
 }
+
+// Hitbox
+public abstract class HitboxComponent extends Component {
+  public ArrayList<HitboxComponent> hits = new ArrayList();
+  
+  public abstract boolean hit(PVector point);
+  public abstract boolean hit(float x, float y);
+  public abstract boolean hit(HitboxComponent hitbox);
+  
+  @Override
+  public void update(float delta) {
+    // TODO: check for every hitbox of the scene (except this one)
+  }
+}
+
+public class RectHitbox extends HitboxComponent {
+  public float w;
+  public float h;
+  
+  public RectHitbox(float w, float h) {
+    super();
+    this.w = w;
+    this.h = h;
+  }
+  
+  public boolean hit(PVector point) {
+    PVector pt = entity().transform.globalToLocal(point);
+    return pt.x > -w/2 && pt.x < w/2 && pt.y > -h/2 && pt.y < h/2;
+  }
+  
+  public boolean hit(float x, float y) {
+    PVector pt = entity().transform.globalToLocal(x, y);
+    return pt.x > -w/2 && pt.x < w/2 && pt.y > -h/2 && pt.y < h/2;
+  }
+  
+  public boolean hit(HitboxComponent hitbox) {
+    if (hitbox instanceof RectHitbox) {
+      // TODO
+    }
+    if (hitbox instanceof CircleHitbox) {
+      // TODO
+    }
+    return false;
+  }
+}
+
+public class CircleHitbox extends HitboxComponent {
+  public float radius;
+  
+  public CircleHitbox(float r) {
+    super();
+    this.radius = r;
+  }
+  
+  public boolean hit(PVector point) {
+    PVector pt = entity().transform.globalToLocal(point);
+    return pt.mag() < radius;
+  }
+  
+  public boolean hit(float x, float y) {
+    PVector pt = entity().transform.globalToLocal(x, y);
+    return pt.mag() < radius;
+  }
+  
+  public boolean hit(HitboxComponent hitbox) {
+    if (hitbox instanceof RectHitbox) {
+      // TODO
+    }
+    if (hitbox instanceof CircleHitbox) {
+      PVector pt = entity().transform.globalToLocal(hitbox.entity().transform.vector);
+      return pt.mag() < radius + ((CircleHitbox)hitbox).radius;
+    }
+    return false;
+  }
+}
